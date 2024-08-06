@@ -6,7 +6,6 @@ function create_posttype() {
 register_post_type( 'pies',
 
 // CPT Options
-
 array( 'labels' => array (
         'name' => __( 'pies' ),
         'singular_name' => __( 'pie' )
@@ -17,7 +16,7 @@ array( 'labels' => array (
         'rewrite' => array('slug' => 'pies'),
     ));
 }
-// Hooking up our function to theme setup
+
 add_action( 'init', 'create_posttype' );
 /* Custom Post Type End */
 
@@ -27,6 +26,7 @@ function post_type_pies() {
     'title', // Post title
     'editor', // post content
     'thumbnail', // featured images
+    'custom-fields',
     );
     $labels = array(
     'name' => _x('Pies', 'plural'),
@@ -51,22 +51,6 @@ function post_type_pies() {
     'has_archive' => true,
     'hierarchical' => false,
     'show_in_rest' => true,
-    // 'template' => array(
-    //     array(
-    //         'core/group',
-    //         array(
-    //             'align' => 'full',
-    //         ),
-    //     ),
-    //     array(
-    //         'core/heading',
-    //         array(
-    //             'textAlign' => 'center',
-    //             'level' => 1,
-    //             'placeholder' => __('Describe your pie.', )
-    //         )
-    //     )
-    // )
     );
     register_post_type('pies', $args);
     }
@@ -76,7 +60,6 @@ function post_type_pies() {
 
 
     /*Change title placeholder text */
-
     function pies_change_title_text( $title ){
         $screen = get_current_screen();
       
@@ -88,3 +71,47 @@ function post_type_pies() {
    }
       
    add_filter( 'enter_title_here', 'pies_change_title_text' );
+
+    // Shortcode
+    if (!function_exists('pies_shortcode')) {
+    
+    function pies_shortcode($atts) {
+        // Define default attributes.
+        $atts = shortcode_atts(
+            array(
+                'lookup' => '',
+            ),
+            $atts,
+            'pies'
+        );
+
+        // Extract the 'lookup' attribute.
+        $lookup = sanitize_text_field($atts['lookup']);
+
+        // Sample data for pies.
+        $pies = array(
+            'apple' => 'Apple Pie',
+            'cherry' => 'Cherry Pie',
+            'pumpkin' => 'Pumpkin Pie',
+            'blueberry' => 'Blueberry Pie',
+        );
+
+        $output = '';
+
+        // If 'lookup' is provided and exists in sample data, return the corresponding pie.
+        if ($lookup && array_key_exists($lookup, $pies)) {
+            $output = '<div>' . esc_html($pies[$lookup]) . '</div>';
+        } else {
+            // If 'lookup' is not provided or does not exist, return all pie types.
+            $output .= '<div>Available pie types:</div><ul>';
+            foreach ($pies as $key => $pie) {
+                $output .= '<li>' . esc_html($pie) . '</li>';
+            }
+            $output .= '</ul>';
+        }
+
+        return $output;
+    }
+
+    add_shortcode('pies', 'pies_shortcode');
+}

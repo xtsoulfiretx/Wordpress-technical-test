@@ -6,7 +6,6 @@ function create_posttype() {
 register_post_type( 'pies',
 
 // CPT Options
-
 array( 'labels' => array (
         'name' => __( 'pies' ),
         'singular_name' => __( 'pie' )
@@ -17,7 +16,7 @@ array( 'labels' => array (
         'rewrite' => array('slug' => 'pies'),
     ));
 }
-// Hooking up our function to theme setup
+
 add_action( 'init', 'create_posttype' );
 /* Custom Post Type End */
 
@@ -27,6 +26,7 @@ function post_type_pies() {
     'title', // Post title
     'editor', // post content
     'thumbnail', // featured images
+    'custom-fields',
     );
     $labels = array(
     'name' => _x('Pies', 'plural'),
@@ -57,43 +57,9 @@ function post_type_pies() {
     add_action('init', 'post_type_pies');
     /*Custom Pies type end*/
 
-    /*Add description and ingredients fields */
-    add_action("add_meta_boxes_{pies}", "pies_init");
-    
-    function pies_init(){
-        add_meta_box(
-        "pies_description_meta", 
-        "Pie Description", 
-        "pies_description", 
-        "pies", 
-        "normal", 
-        "low");
 
-        add_meta_box("pies_ingredients-id", "Pie Ingredients", "pies_ingredients", "pies", "normal", "low");
-    }
-    
-    function pies_description(){
-        global $post;
-        $custom = get_post_custom($post->ID);
-        $pies_description = $custom["pies_description"][0];
-        ?>
-        <label>Describe your Pie</label>
-        <input name="pies_description" value="<?php echo $pies_description; ?>"/>
-        <?php
-    }
-    
-    function pies_ingredients() {
-        global $post;
-        $custom = get_post_custom($post->ID);
-        $pies_ingredients = $custom["pies_ingredients"][0];
-        ?> 
-        <p><label>What goes in your pie? (Ingredients)</label><br />
-        <textarea cols="50" rows="5" name="ingredients"><?php echo $pies_ingredients; ?></textarea></p>
-        <?php
-    }
 
     /*Change title placeholder text */
-
     function pies_change_title_text( $title ){
         $screen = get_current_screen();
       
@@ -105,3 +71,47 @@ function post_type_pies() {
    }
       
    add_filter( 'enter_title_here', 'pies_change_title_text' );
+
+    // Shortcode
+    if (!function_exists('pies_shortcode')) {
+    
+    function pies_shortcode($atts) {
+        // Define default attributes.
+        $atts = shortcode_atts(
+            array(
+                'lookup' => '',
+            ),
+            $atts,
+            'pies'
+        );
+
+        // Extract the 'lookup' attribute.
+        $lookup = sanitize_text_field($atts['lookup']);
+
+        // Sample data for pies.
+        $pies = array(
+            'apple' => 'Apple Pie',
+            'cherry' => 'Cherry Pie',
+            'pumpkin' => 'Pumpkin Pie',
+            'blueberry' => 'Blueberry Pie',
+        );
+
+        $output = '';
+
+        // If 'lookup' is provided and exists in sample data, return the corresponding pie.
+        if ($lookup && array_key_exists($lookup, $pies)) {
+            $output = '<div>' . esc_html($pies[$lookup]) . '</div>';
+        } else {
+            // If 'lookup' is not provided or does not exist, return all pie types.
+            $output .= '<div>Available pie types:</div><ul>';
+            foreach ($pies as $key => $pie) {
+                $output .= '<li>' . esc_html($pie) . '</li>';
+            }
+            $output .= '</ul>';
+        }
+
+        return $output;
+    }
+
+    add_shortcode('pies', 'pies_shortcode');
+}

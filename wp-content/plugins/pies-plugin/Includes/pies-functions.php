@@ -51,46 +51,29 @@ function post_type_pies() {
     'has_archive' => true,
     'hierarchical' => false,
     'show_in_rest' => true,
+    // 'template' => array(
+    //     array(
+    //         'core/group',
+    //         array(
+    //             'align' => 'full',
+    //         ),
+    //     ),
+    //     array(
+    //         'core/heading',
+    //         array(
+    //             'textAlign' => 'center',
+    //             'level' => 1,
+    //             'placeholder' => __('Describe your pie.', )
+    //         )
+    //     )
+    // )
     );
     register_post_type('pies', $args);
     }
     add_action('init', 'post_type_pies');
     /*Custom Pies type end*/
 
-    /*Add description and ingredients fields */
-    add_action("add_meta_boxes_{pies}", "pies_init");
-    
-    function pies_init(){
-        add_meta_box(
-        "pies_description_meta", 
-        "Pie Description", 
-        "pies_description", 
-        "pies", 
-        "normal", 
-        "low");
 
-        add_meta_box("pies_ingredients-id", "Pie Ingredients", "pies_ingredients", "pies", "normal", "low");
-    }
-    
-    function pies_description(){
-        global $post;
-        $custom = get_post_custom($post->ID);
-        $pies_description = $custom["pies_description"][0];
-        ?>
-        <label>Describe your Pie</label>
-        <input name="pies_description" value="<?php echo $pies_description; ?>"/>
-        <?php
-    }
-    
-    function pies_ingredients() {
-        global $post;
-        $custom = get_post_custom($post->ID);
-        $pies_ingredients = $custom["pies_ingredients"][0];
-        ?> 
-        <p><label>What goes in your pie? (Ingredients)</label><br />
-        <textarea cols="50" rows="5" name="ingredients"><?php echo $pies_ingredients; ?></textarea></p>
-        <?php
-    }
 
     /*Change title placeholder text */
 

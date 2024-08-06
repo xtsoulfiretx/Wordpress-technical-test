@@ -140,6 +140,14 @@ function post_type_pies() {
         // Extract the 'lookup' attribute.
         $lookup = sanitize_text_field($atts['lookup']);
 
+        // Sample data for pies.
+        $pie_type = array(
+            'apple' => 'Apple Pie',
+            'cherry' => 'Cherry Pie',
+            'pumpkin' => 'Pumpkin Pie',
+            'blueberry' => 'Blueberry Pie',
+        );
+
         $output = '';
 
         // If 'lookup' is provided and exists in sample data, return the corresponding pie.

@@ -1,5 +1,12 @@
 <?php 
 
+// Link style sheet
+function pies_enqueue_style() {
+    wp_enqueue_style('pies_style', plugin_dir_url(__FILE__) . '../assets/style.css' );
+}
+
+add_action('wp_enqueue_scripts', 'pies_enqueue_style');
+
 /* Custom Post Type Start */
 
 function create_posttype() {

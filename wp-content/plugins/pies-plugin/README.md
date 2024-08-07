@@ -60,3 +60,6 @@ with a plugin which i did not include during this challenge.
 - Personally i would have added some additional plugins to handle some of this functionality however,
 The wording of the task made me feel as if i should try to handle this challenge without them. 
 ## Note: This may have been my own misunderstanding or slight miscommunication provided by recruitment agent. 
+
+## Repo
+**https://github.com/xtsoulfiretx/Wordpress-technical-test**
